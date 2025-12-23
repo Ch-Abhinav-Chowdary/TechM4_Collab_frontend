@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // 1️⃣ Create an Axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://techm4-collab-backend.onrender.com/api',
+  baseURL: 'https://techm4-collab-backend-1.onrender.com/api',
   // withCredentials: true, // Uncomment ONLY if using cookies-based auth
 });
 
