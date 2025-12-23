@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../utils/axiosConfig';
-import './AddWorkflowModal.css';
+import './AddWorkFlowModal.css';
 
 const AddWorkflowModal = ({ onClose, onWorkflowAdded }) => {
   const [form, setForm] = useState({
