@@ -1,0 +1,347 @@
+/* ============================================
+   EMPLOYEE MONITOR
+   ============================================ */
+
+.employee-monitor {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.monitor-header {
+  margin-bottom: 2rem;
+}
+
+.monitor-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0 0 0.5rem 0;
+}
+
+.monitor-header p {
+  color: #6B7280;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.monitor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.employee-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E5E7EB;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.employee-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.employee-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.employee-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.employee-info {
+  flex: 1;
+}
+
+.employee-info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.employee-email {
+  color: #6B7280;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-badge.online {
+  background: #ECFDF5;
+  color: #059669;
+}
+
+.status-badge.offline {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.employee-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stat-icon {
+  font-size: 1.8rem;
+  color: #667EEA;
+}
+
+.stat-icon.success {
+  color: #10B981;
+}
+
+.stat-icon.warning {
+  color: #F59E0B;
+}
+
+.stat-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1F2937;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #6B7280;
+  margin-top: 0.25rem;
+}
+
+.employee-progress {
+  margin-bottom: 1rem;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: #F3F4F6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667EEA 0%, #764BA2 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.employee-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.level-badge,
+.points-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.level-badge {
+  background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+  color: #78350F;
+}
+
+.points-badge {
+  background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+  color: #FFFFFF;
+}
+
+/* Employee Detail Modal */
+.employee-detail-modal {
+  background: white;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.employee-detail-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.employee-detail-modal .modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1F2937;
+}
+
+.employee-detail-modal .modal-header button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6B7280;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.employee-detail-modal .modal-header button:hover {
+  background: #F3F4F6;
+  color: #1F2937;
+}
+
+.employee-detail-modal .modal-body {
+  padding: 2rem;
+}
+
+.no-tasks {
+  text-align: center;
+  color: #6B7280;
+  padding: 2rem;
+  font-size: 1rem;
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.task-item {
+  background: #F9FAFB;
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid #E5E7EB;
+  transition: all 0.2s ease;
+}
+
+.task-item:hover {
+  background: #F3F4F6;
+  transform: translateX(4px);
+}
+
+.task-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.task-item-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1F2937;
+  flex: 1;
+}
+
+.task-item-header .status-badge {
+  flex-shrink: 0;
+}
+
+.task-description {
+  color: #6B7280;
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.5;
+}
+
+.task-due-date {
+  color: #6B7280;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.status-badge.to-do {
+  background: #EFF6FF;
+  color: #1E40AF;
+}
+
+.status-badge.in-progress {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-badge.done {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.loading,
+.unauthorized {
+  text-align: center;
+  padding: 4rem 2rem;
+  font-size: 1.2rem;
+  color: #6B7280;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .employee-monitor {
+    padding: 1rem;
+  }
+
+  .monitor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .employee-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .employee-detail-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .employee-detail-modal .modal-body {
+    padding: 1.5rem;
+  }
+}
+

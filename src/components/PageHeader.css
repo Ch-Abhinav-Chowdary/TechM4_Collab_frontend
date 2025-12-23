@@ -1,0 +1,149 @@
+/* ============================================
+   PAGE HEADER COMPONENT
+   ============================================ */
+
+.page-header {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 24px 32px;
+  margin-bottom: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.page-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-header-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 30px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  flex-shrink: 0;
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.page-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-header-title {
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.page-header-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+  font-weight: 500;
+  margin: 0;
+}
+
+.page-header-section {
+  flex: 1;
+  min-width: 200px;
+}
+
+.page-header-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 20px 20px;
+    margin-bottom: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header-brand {
+    width: 100%;
+  }
+
+  .page-header-logo {
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
+  }
+
+  .page-header-title {
+    font-size: 24px;
+  }
+
+  .page-header-section {
+    width: 100%;
+  }
+
+  .page-header-section-title {
+    text-align: left;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .page-header-brand {
+    gap: 12px;
+  }
+
+  .page-header-logo {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+
+  .page-header-title {
+    font-size: 20px;
+  }
+
+  .page-header-subtitle {
+    font-size: 12px;
+  }
+
+  .page-header-section-title {
+    font-size: 16px;
+  }
+}
+
