@@ -7,7 +7,7 @@ import './UserProfile.css';
 const UserProfile = () => {
   const { user, setUser } = useContext(AuthContext);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({ name: user?.name, email: user?.email });
+  const [formData, setFormData] = useState({ name: user?.name, email: user?.email, memberRole: user?.memberRole || '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
@@ -42,7 +42,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (user) {
-      setFormData({ name: user.name, email: user.email });
+      setFormData({ name: user.name, email: user.email, memberRole: user.memberRole || '' });
       fetchUserStats();
       generateMockAchievements();
       startRealTimeUpdates();
@@ -106,7 +106,7 @@ const UserProfile = () => {
     );
   }
 
-  const getCategoryDetails = (role) => {
+  const getCategoryDetails = (role, memberRole = null) => {
     switch (role) {
       case 'admin':
         return {
@@ -119,11 +119,11 @@ const UserProfile = () => {
         };
       case 'member':
         return {
-          label: 'Project Manager',
+          label: memberRole || 'Member',
           color: '#F59E0B',
           gradient: 'linear-gradient(135deg, #F59E0B, #D97706)',
           icon: '⚡',
-          desc: 'Responsible for task oversight and coordination.',
+          desc: memberRole ? `Works as ${memberRole} in the team.` : 'Team member with task management capabilities.',
           perks: ['Task Management', 'Team Coordination', 'Progress Tracking', 'File Access']
         };
       case 'viewer':
@@ -147,7 +147,7 @@ const UserProfile = () => {
     }
   };
 
-  const category = getCategoryDetails(user.role);
+  const category = getCategoryDetails(user.role, user.memberRole);
   const isViewer = user.role === 'viewer';
 
   const handleEditToggle = () => {
@@ -464,6 +464,19 @@ const UserProfile = () => {
                           placeholder="Your email"
                         />
                       </div>
+                      
+                      {user.role === 'member' && (
+                        <div className="form-group">
+                          <label>Member Role</label>
+                          <input
+                            type="text"
+                            name="memberRole"
+                            value={formData.memberRole}
+                            onChange={handleChange}
+                            placeholder="e.g., Developer, Designer, Team Lead"
+                          />
+                        </div>
+                      )}
                       
                       {error && (
                         <motion.p 
