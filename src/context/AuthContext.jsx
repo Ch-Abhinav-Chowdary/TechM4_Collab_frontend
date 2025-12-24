@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password, role = 'member') => {
+  const register = async (name, email, password, role = 'member', memberRole = null) => {
     try {
       console.log('🔄 Attempting registration for:', email);
       
@@ -87,7 +87,8 @@ export const AuthProvider = ({ children }) => {
         name, 
         email, 
         password, 
-        role 
+        role,
+        memberRole: memberRole || null
       });
       
       console.log('✅ Registration successful:', response.data);

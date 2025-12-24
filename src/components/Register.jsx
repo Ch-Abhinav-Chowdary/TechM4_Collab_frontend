@@ -10,7 +10,8 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    role: 'member'
+    role: 'member',
+    memberRole: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,7 +45,7 @@ const Register = () => {
 
     try {
       console.log('🔄 Submitting registration form...');
-      await register(formData.name, formData.email, formData.password, formData.role);
+      await register(formData.name, formData.email, formData.password, formData.role, formData.memberRole);
       
       console.log('✅ Registration successful, navigating to dashboard...');
       navigate('/');
@@ -198,6 +199,28 @@ const Register = () => {
             </div>
             <small className="input-hint">Choose your role in the team</small>
           </div>
+
+          {formData.role === 'member' && (
+            <div className="input-group">
+              <label htmlFor="memberRole" className="input-label">
+                Member Role
+              </label>
+              <div className="input-container">
+                <HiUserGroup className="input-icon" />
+                <input
+                  type="text"
+                  id="memberRole"
+                  name="memberRole"
+                  value={formData.memberRole}
+                  onChange={handleChange}
+                  placeholder="e.g., Developer, Designer, Team Lead, Manager"
+                  className="modern-input"
+                  disabled={loading}
+                />
+              </div>
+              <small className="input-hint">Specify your specific role as a member (optional)</small>
+            </div>
+          )}
 
           <motion.button
             type="submit"
