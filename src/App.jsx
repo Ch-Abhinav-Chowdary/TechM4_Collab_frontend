@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useContext, useState, useEffect } from 'react';
 import Login from './components/Login';
-import Register from './components/Register';
+import CreateEmployee from './components/CreateEmployee';
 import Dashboard from './components/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import TaskBoard from './components/TaskBoard';
@@ -45,7 +45,7 @@ function App() {
   }, []);
 
   // Check if current route requires auth
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isAuthPage = location.pathname === '/login';
   
   // Calculate sidebar width based on state
   const getSidebarWidth = () => {
@@ -85,7 +85,6 @@ function App() {
             >
               <Routes location={location} key={location.pathname}>
                 <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
 
                 {/* Protected Routes */}
                 <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -96,6 +95,7 @@ function App() {
                 <Route path="/analytics" element={<ProtectedRoute role="admin"><TaskAnalytics /></ProtectedRoute>} />
                 <Route path="/admin/workflows" element={<ProtectedRoute role="admin"><WorkflowManager /></ProtectedRoute>} />
                 <Route path="/admin/employees" element={<ProtectedRoute role="admin"><EmployeeMonitor /></ProtectedRoute>} />
+                <Route path="/admin/create-employee" element={<ProtectedRoute role="admin"><CreateEmployee /></ProtectedRoute>} />
                 <Route path="/member" element={<ProtectedRoute role="member"><MemberDashboard /></ProtectedRoute>} />
                 <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
                 <Route path="/guide" element={<ProtectedRoute><GamificationGuide /></ProtectedRoute>} />

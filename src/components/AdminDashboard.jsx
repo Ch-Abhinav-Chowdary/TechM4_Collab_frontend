@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import api from '../utils/axiosConfig';
 import { AuthContext } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   HiUsers, HiClipboardList, HiCheckCircle, HiClock,
   HiChartBar, HiRefresh, HiCog, HiDocumentText,
@@ -21,6 +21,7 @@ const ROLES = ['admin', 'member', 'viewer'];
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -332,11 +333,21 @@ const AdminDashboard = () => {
             </motion.span>
             <motion.button
               className="invite-btn"
+              onClick={() => navigate('/admin/create-employee')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ marginRight: '1rem' }}
+            >
+              ➕ Create Employee
+            </motion.button>
+            <motion.button
+              className="invite-btn"
               onClick={() => setShowInviteModal(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              style={{ background: 'linear-gradient(135deg, #8B5CF6, #7C3AED)' }}
             >
-              ➕ Invite User
+              📧 Invite User
             </motion.button>
           </div>
         </div>

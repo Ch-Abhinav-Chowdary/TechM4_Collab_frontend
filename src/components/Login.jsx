@@ -171,10 +171,7 @@ const Login = () => {
 
         <div className="login-footer">
           <p className="footer-text">
-            Don't have an account?{' '}
-            <Link to="/register" className="footer-link">
-              Sign up for free
-            </Link>
+            Contact your administrator to create an account
           </p>
         </div>
       </motion.div>
