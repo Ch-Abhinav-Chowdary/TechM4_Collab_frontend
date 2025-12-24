@@ -38,7 +38,9 @@ const NavBar = () => {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: HiHome, iconOutline: FiHome },
     { path: '/tasks', label: 'Tasks', icon: HiClipboardList, iconOutline: FiClipboard },
-    { path: '/activities', label: 'Activity', icon: HiLightningBolt, iconOutline: FiZap },
+    ...(user?.role === 'admin' ? [
+      { path: '/activities', label: 'Activity', icon: HiLightningBolt, iconOutline: FiZap }
+    ] : []),
     { path: '/leaderboard', label: 'Leaderboard', icon: HiStar, iconOutline: FiAward },
     { path: '/guide', label: 'Guide', icon: HiBookOpen, iconOutline: FiBook },
     ...(user?.role === 'admin' ? [

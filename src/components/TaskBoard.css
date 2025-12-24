@@ -776,6 +776,146 @@
   color: #6b7280;
 }
 
+/* Proof Files Section */
+.proof-section {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.proof-files-container {
+  width: 100%;
+}
+
+.proof-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.proof-file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.proof-file-icon {
+  font-size: 1.25rem;
+}
+
+.proof-file-link {
+  flex: 1;
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.proof-file-link:hover {
+  color: #5568d3;
+  text-decoration: underline;
+}
+
+.proof-file-date {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.no-proof-message {
+  color: #9ca3af;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.proof-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.upload-proof-btn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  align-self: flex-start;
+}
+
+.upload-proof-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.upload-proof-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.proof-file-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.proof-file-preview span {
+  color: #374151;
+  font-weight: 500;
+}
+
+.remove-proof-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background 0.2s;
+}
+
+.remove-proof-btn:hover {
+  background: #dc2626;
+}
+
+.submit-proof-btn {
+  padding: 0.75rem 1.5rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+
+.submit-proof-btn:hover:not(:disabled) {
+  background: #059669;
+}
+
+.submit-proof-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Loading States */
 .task-board.loading {
   display: flex;

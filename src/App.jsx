@@ -91,7 +91,7 @@ function App() {
                 <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/tasks" element={<ProtectedRoute><TaskBoard /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-                <Route path="/activities" element={<ProtectedRoute><ActivityFeed /></ProtectedRoute>} />
+                <Route path="/activities" element={<ProtectedRoute role="admin"><ActivityFeed /></ProtectedRoute>} />
                 <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/analytics" element={<ProtectedRoute role="admin"><TaskAnalytics /></ProtectedRoute>} />
                 <Route path="/admin/workflows" element={<ProtectedRoute role="admin"><WorkflowManager /></ProtectedRoute>} />

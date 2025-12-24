@@ -52,6 +52,9 @@ const TaskBoard = () => {
     overdue: 0
   });
   const [realTimeUpdates, setRealTimeUpdates] = useState([]);
+  const [proofFile, setProofFile] = useState(null);
+  const [uploadingProof, setUploadingProof] = useState(false);
+  const proofFileInputRef = useRef(null);
   
   const intervalRef = useRef(null);
 
@@ -887,6 +890,122 @@ const TaskBoard = () => {
                       <span>{selectedTask.progress || 0}%</span>
                     </div>
                   </div>
+
+                  {/* Proof Files Section - Only show for assigned members */}
+                  {selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
+                    assignee => {
+                      // Handle both populated (object with _id) and non-populated (ID string) cases
+                      const assigneeId = assignee._id || assignee.id || assignee;
+                      const userId = user?._id || user?.id;
+                      return String(assigneeId) === String(userId);
+                    }
+                  ) && (
+                    <div className="detail-row proof-section">
+                      <span className="detail-label">Proof of Completion:</span>
+                      <div className="proof-files-container">
+                        {selectedTask.proofFiles && selectedTask.proofFiles.length > 0 ? (
+                          <div className="proof-files-list">
+                            {selectedTask.proofFiles.map((proof, idx) => (
+                              <div key={idx} className="proof-file-item">
+                                <span className="proof-file-icon">📎</span>
+                                <a 
+                                  href={`${(import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://techm4-collab-backend-1.onrender.com')}/${proof.fileUrl}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="proof-file-link"
+                                >
+                                  {proof.fileName}
+                                </a>
+                                <span className="proof-file-date">
+                                  {new Date(proof.uploadedAt).toLocaleDateString()}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="no-proof-message">No proof files uploaded yet</p>
+                        )}
+                        
+                        <div className="proof-upload-section">
+                          <input
+                            type="file"
+                            ref={proofFileInputRef}
+                            onChange={(e) => setProofFile(e.target.files[0])}
+                            style={{ display: 'none' }}
+                            accept="image/*,.pdf,.doc,.docx,.txt"
+                          />
+                          <button
+                            type="button"
+                            className="upload-proof-btn"
+                            onClick={() => proofFileInputRef.current?.click()}
+                            disabled={uploadingProof}
+                          >
+                            📤 {proofFile ? 'Change File' : 'Upload Proof'}
+                          </button>
+                          {proofFile && (
+                            <div className="proof-file-preview">
+                              <span>{proofFile.name}</span>
+                              <button
+                                type="button"
+                                className="remove-proof-btn"
+                                onClick={() => setProofFile(null)}
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          )}
+                          {proofFile && (
+                            <button
+                              type="button"
+                              className="submit-proof-btn"
+                              onClick={async () => {
+                                if (!proofFile) return;
+                                
+                                // Double-check assignment before upload (UI check, backend is source of truth)
+                                const isAssigned = selectedTask.assignedTo && selectedTask.assignedTo.some(
+                                  assignee => {
+                                    const assigneeId = assignee._id || assignee.id || assignee;
+                                    const userId = user?._id || user?.id;
+                                    return String(assigneeId) === String(userId);
+                                  }
+                                );
+                                
+                                if (!isAssigned) {
+                                  alert('You can only upload proof for tasks assigned to you.');
+                                  return;
+                                }
+                                
+                                setUploadingProof(true);
+                                try {
+                                  const formData = new FormData();
+                                  formData.append('file', proofFile);
+                                  
+                                  const res = await api.post(`/tasks/${selectedTask._id}/proof`, formData, {
+                                    headers: { 'Content-Type': 'multipart/form-data' }
+                                  });
+                                  
+                                  // Update selected task with new proof
+                                  setSelectedTask(res.data.task);
+                                  setProofFile(null);
+                                  // Refresh tasks list
+                                  fetchTasks();
+                                } catch (err) {
+                                  console.error('Proof upload error:', err);
+                                  const errorMessage = err.response?.data?.error || 'Failed to upload proof';
+                                  alert(errorMessage);
+                                } finally {
+                                  setUploadingProof(false);
+                                }
+                              }}
+                              disabled={uploadingProof}
+                            >
+                              {uploadingProof ? 'Uploading...' : 'Submit Proof'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
