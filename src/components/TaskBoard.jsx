@@ -906,17 +906,80 @@ const TaskBoard = () => {
                   </div>
                   </div>
 
-                  {/* Proof Files Section - Show for assigned members and admins */}
-                  {((selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
-                    assignee => {
-                      // Handle both populated (object with _id) and non-populated (ID string) cases
-                      const assigneeId = assignee._id || assignee.id || assignee;
-                      const userId = user?._id || user?.id;
-                      return String(assigneeId) === String(userId);
-                    }
-                  )) || user?.role === 'admin') && (
+                  {/* Task Files Section - Files uploaded by admin (visible to assigned employees and admins) */}
+                  {(() => {
+                    // Check if user is assigned to the task
+                    const isAssigned = selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
+                      assignee => {
+                        const assigneeId = assignee._id || assignee.id || assignee;
+                        const userId = user?._id || user?.id;
+                        return String(assigneeId) === String(userId);
+                      }
+                    );
+                    
+                    // Show task files if user is assigned OR user is admin
+                    // Also show if task has files (even if no one assigned yet, admin can see)
+                    const canViewTaskFiles = isAssigned || user?.role === 'admin';
+                    const hasFiles = selectedTask.files && Array.isArray(selectedTask.files) && selectedTask.files.length > 0;
+                    return canViewTaskFiles && hasFiles;
+                  })() && (
+                    <div className="detail-row task-files-section">
+                      <div className="task-files-header">
+                        <span className="detail-label">📋 Task Files (Work Description):</span>
+                        <span className="task-files-badge" title="Files uploaded by admin">
+                          Admin Uploaded
+                        </span>
+                      </div>
+                      <div className="task-files-container">
+                        <div className="task-files-list">
+                          {selectedTask.files.map((fileUrl, idx) => {
+                            // Extract filename from URL
+                            const fileName = fileUrl.split('/').pop() || `File ${idx + 1}`;
+                            return (
+                              <div key={idx} className="task-file-item">
+                                <span className="task-file-icon">📄</span>
+                                <a 
+                                  href={`${(import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://techm4-collab-backend-1.onrender.com')}/${fileUrl}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="task-file-link"
+                                >
+                                  {fileName}
+                                </a>
+                                <span className="task-file-label">Work Description</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Proof Files Section - Visible to assigned employees AND admins */}
+                  {(() => {
+                    // Check if user is assigned to the task
+                    const isAssigned = selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
+                      assignee => {
+                        // Handle both populated (object with _id) and non-populated (ID string) cases
+                        const assigneeId = assignee._id || assignee.id || assignee;
+                        const userId = user?._id || user?.id;
+                        return String(assigneeId) === String(userId);
+                      }
+                    );
+                    
+                    // Show proof files if user is assigned OR user is admin
+                    const canViewProof = isAssigned || user?.role === 'admin';
+                    return canViewProof;
+                  })() && (
                     <div className="detail-row proof-section">
-                      <span className="detail-label">Proof of Completion:</span>
+                      <div className="proof-section-header">
+                        <span className="detail-label">Proof of Completion:</span>
+                        {user?.role === 'admin' && (
+                          <span className="admin-view-badge" title="Admin can view all proof files">
+                            👁️ Admin View
+                          </span>
+                        )}
+                      </div>
                       <div className="proof-files-container">
                         {selectedTask.proofFiles && selectedTask.proofFiles.length > 0 ? (
                           <div className="proof-files-list">
