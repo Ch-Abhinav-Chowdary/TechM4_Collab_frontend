@@ -832,11 +832,25 @@ const TaskBoard = () => {
               
               <div className="modal-body">
                 <div className="task-details">
-                  <div className="detail-row">
-                    <span className="detail-label">Description:</span>
-                    <span className="detail-value">{selectedTask.description || 'No description'}</span>
+                  {/* Description Section - Prominent Display */}
+                  <div className="task-description-section">
+                    <div className="description-header">
+                      <span className="description-icon">📝</span>
+                      <h4 className="description-title">Task Description</h4>
+                    </div>
+                    <div className="description-content">
+                      {selectedTask.description ? (
+                        <p className="description-text">{selectedTask.description}</p>
+                      ) : (
+                        <p className="description-placeholder">No description provided for this task.</p>
+                      )}
+                    </div>
                   </div>
                   
+                  {/* Task Metadata Section */}
+                  <div className="task-metadata-section">
+                    <h4 className="metadata-title">Task Information</h4>
+                    
                   <div className="detail-row">
                     <span className="detail-label">Assigned To:</span>
                     <div className="detail-value">
@@ -889,6 +903,7 @@ const TaskBoard = () => {
                       ></div>
                       <span>{selectedTask.progress || 0}%</span>
                     </div>
+                  </div>
                   </div>
 
                   {/* Proof Files Section - Show for assigned members and admins */}
