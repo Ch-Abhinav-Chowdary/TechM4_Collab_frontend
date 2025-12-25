@@ -891,15 +891,15 @@ const TaskBoard = () => {
                     </div>
                   </div>
 
-                  {/* Proof Files Section - Only show for assigned members */}
-                  {selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
+                  {/* Proof Files Section - Show for assigned members and admins */}
+                  {((selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
                     assignee => {
                       // Handle both populated (object with _id) and non-populated (ID string) cases
                       const assigneeId = assignee._id || assignee.id || assignee;
                       const userId = user?._id || user?.id;
                       return String(assigneeId) === String(userId);
                     }
-                  ) && (
+                  )) || user?.role === 'admin') && (
                     <div className="detail-row proof-section">
                       <span className="detail-label">Proof of Completion:</span>
                       <div className="proof-files-container">
@@ -918,6 +918,11 @@ const TaskBoard = () => {
                                 </a>
                                 <span className="proof-file-date">
                                   {new Date(proof.uploadedAt).toLocaleDateString()}
+                                  {proof.uploadedBy && proof.uploadedBy.name && (
+                                    <span style={{ marginLeft: '0.5rem', color: '#9ca3af', fontSize: '0.75rem' }}>
+                                      by {proof.uploadedBy.name}
+                                    </span>
+                                  )}
                                 </span>
                               </div>
                             ))}
@@ -926,6 +931,14 @@ const TaskBoard = () => {
                           <p className="no-proof-message">No proof files uploaded yet</p>
                         )}
                         
+                        {/* Upload section - Only show for assigned members, not admins */}
+                        {selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
+                          assignee => {
+                            const assigneeId = assignee._id || assignee.id || assignee;
+                            const userId = user?._id || user?.id;
+                            return String(assigneeId) === String(userId);
+                          }
+                        ) && (
                         <div className="proof-upload-section">
                           <input
                             type="file"
@@ -1003,6 +1016,7 @@ const TaskBoard = () => {
                             </button>
                           )}
                         </div>
+                        )}
                       </div>
                     </div>
                   )}

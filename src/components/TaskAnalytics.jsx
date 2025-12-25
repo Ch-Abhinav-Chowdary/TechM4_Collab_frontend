@@ -46,25 +46,35 @@ const TaskAnalytics = () => {
   const { user } = useContext(AuthContext);
   const intervalRef = useRef(null);
 
-  // Real-time data simulation
+  // Real-time data from backend
   const [realTimeData, setRealTimeData] = useState({
     tasksCreated: 0,
     tasksCompleted: 0,
     activeUsers: 0
   });
 
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const res = await axios.get('/tasks/analytics');
-        setAnalytics(res.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to fetch task analytics.');
-        setLoading(false);
+  const fetchAnalytics = async () => {
+    try {
+      const res = await axios.get('/tasks/analytics');
+      setAnalytics(res.data);
+      
+      // Update real-time data from backend
+      if (res.data.tasksCreatedToday !== undefined) {
+        setRealTimeData({
+          tasksCreated: res.data.tasksCreatedToday || 0,
+          tasksCompleted: res.data.tasksCompletedToday || 0,
+          activeUsers: res.data.activeUsers || 0
+        });
       }
-    };
+      
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to fetch task analytics.');
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (user && user.role === 'admin') {
       fetchAnalytics();
     } else {
@@ -73,20 +83,16 @@ const TaskAnalytics = () => {
     }
   }, [user]);
 
-  // Real-time updates simulation
+  // Real-time updates - refresh analytics data periodically
   useEffect(() => {
-    if (isRealTime) {
+    if (isRealTime && user && user.role === 'admin') {
       intervalRef.current = setInterval(() => {
-        setRealTimeData(prev => ({
-          tasksCreated: prev.tasksCreated + Math.floor(Math.random() * 3),
-          tasksCompleted: prev.tasksCompleted + Math.floor(Math.random() * 2),
-          activeUsers: Math.floor(Math.random() * 10) + 15
-        }));
-      }, 3000);
+        fetchAnalytics();
+      }, 10000); // Refresh every 10 seconds
 
       return () => clearInterval(intervalRef.current);
     }
-  }, [isRealTime]);
+  }, [isRealTime, user]);
 
   // Auto-refresh animation
   useEffect(() => {
@@ -129,7 +135,13 @@ const TaskAnalytics = () => {
     </div>
   );
 
-  const { totalTasks, tasksByStatus, overdueTasks } = analytics;
+  const { 
+    totalTasks, 
+    tasksByStatus, 
+    overdueTasks, 
+    weeklyTrends = [],
+    changes = {}
+  } = analytics;
   
   const statusCounts = tasksByStatus.reduce((acc, curr) => {
     acc[curr._id] = curr.count;
@@ -214,13 +226,17 @@ const TaskAnalytics = () => {
     ]
   };
 
-  // Mock Line Chart Data for Task Trends
+  // Real Line Chart Data for Task Trends from backend
   const lineChartData = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    labels: weeklyTrends.length > 0 
+      ? weeklyTrends.map(day => day.dayName)
+      : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     datasets: [
       {
         label: 'Tasks Created',
-        data: [12, 19, 15, 25, 22, 18, 24],
+        data: weeklyTrends.length > 0
+          ? weeklyTrends.map(day => day.created)
+          : [0, 0, 0, 0, 0, 0, 0],
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         tension: 0.4,
@@ -228,7 +244,9 @@ const TaskAnalytics = () => {
       },
       {
         label: 'Tasks Completed',
-        data: [8, 15, 12, 20, 18, 14, 19],
+        data: weeklyTrends.length > 0
+          ? weeklyTrends.map(day => day.completed)
+          : [0, 0, 0, 0, 0, 0, 0],
         borderColor: 'rgba(54, 162, 235, 1)',
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         fill: true,
@@ -508,13 +526,13 @@ const TaskAnalytics = () => {
 
       {/* Interactive Metrics Cards */}
       <div className="metrics-grid">
-        {[
+        {[ 
           { 
             type: 'primary', 
             icon: '📊', 
             title: 'Total Tasks', 
             value: totalTasks, 
-            change: '+12%', 
+            change: changes.totalTasks ? `${changes.totalTasks >= 0 ? '+' : ''}${changes.totalTasks}%` : '0%', 
             color: '#667eea' 
           },
           { 
@@ -522,7 +540,7 @@ const TaskAnalytics = () => {
             icon: '✅', 
             title: 'Completed', 
             value: statusCounts['Done'] || 0, 
-            change: '+8%', 
+            change: changes.completed ? `${changes.completed >= 0 ? '+' : ''}${changes.completed}%` : '0%', 
             color: '#10B981' 
           },
           { 
@@ -530,7 +548,7 @@ const TaskAnalytics = () => {
             icon: '⏳', 
             title: 'In Progress', 
             value: statusCounts['In Progress'] || 0, 
-            change: '+5%', 
+            change: changes.inProgress ? `${changes.inProgress >= 0 ? '+' : ''}${changes.inProgress}%` : '0%', 
             color: '#F59E0B' 
           },
           { 
@@ -538,7 +556,7 @@ const TaskAnalytics = () => {
             icon: '⚠️', 
             title: 'Overdue', 
             value: overdueTasks, 
-            change: '-3%', 
+            change: changes.overdue ? `${changes.overdue >= 0 ? '+' : ''}${changes.overdue}%` : '0%', 
             color: '#EF4444' 
           }
         ].map((metric, index) => (
@@ -735,25 +753,25 @@ const TaskAnalytics = () => {
                 {
                   icon: '📈',
                   title: 'Performance',
-                  content: `Task completion rate is ${completionRate}%, which is above the target of 80%.`,
+                  content: `Task completion rate is ${completionRate}%${completionRate >= 80 ? ', which is above the target of 80%.' : ', which is below the target of 80%.'}`,
                   color: '#10B981'
                 },
                 {
                   icon: '⏰',
                   title: 'Efficiency',
-                  content: 'Average task completion time is 3.2 days, down from 4.1 days last week.',
+                  content: `${tasksCompletedToday} tasks completed today. ${weeklyTrends.length > 0 ? `Weekly average: ${Math.round(weeklyTrends.reduce((sum, day) => sum + day.completed, 0) / weeklyTrends.length)} tasks/day.` : ''}`,
                   color: '#3B82F6'
                 },
                 {
                   icon: '🎯',
                   title: 'Focus Areas',
-                  content: `${overdueTasks} tasks need immediate attention to prevent delays.`,
+                  content: `${overdueTasks} ${overdueTasks === 1 ? 'task needs' : 'tasks need'} immediate attention to prevent delays.`,
                   color: '#F59E0B'
                 },
                 {
                   icon: '🚀',
                   title: 'Momentum',
-                  content: 'Team productivity has increased by 15% compared to the previous period.',
+                  content: `Team productivity has ${changes.completed && parseFloat(changes.completed) > 0 ? 'increased' : changes.completed && parseFloat(changes.completed) < 0 ? 'decreased' : 'remained stable'} by ${Math.abs(parseFloat(changes.completed || 0))}% compared to the previous period.`,
                   color: '#8B5CF6'
                 }
               ].map((insight, index) => (
