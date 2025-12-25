@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../utils/axiosConfig';
+import socket from '../socket';
 import { motion } from 'framer-motion';
 import { HiUser, HiChartBar, HiCheckCircle, HiClock, HiTrendingUp } from 'react-icons/hi';
 import './EmployeeMonitor.css';
@@ -15,6 +16,33 @@ const EmployeeMonitor = () => {
   useEffect(() => {
     if (user && user.role === 'admin') {
       fetchEmployees();
+      
+      // Request online users list
+      socket.emit('getOnlineUsers');
+      
+      // Listen for online users updates
+      socket.on('onlineUsersList', (onlineUsers) => {
+        setEmployees(prev => prev.map(emp => ({
+          ...emp,
+          online: onlineUsers.some(ou => ou._id === emp._id || ou._id === emp.id)
+        })));
+      });
+      
+      // Listen for individual user status changes
+      socket.on('userStatusChanged', ({ userId, online: isOnline }) => {
+        setEmployees(prev => prev.map(emp => {
+          const empId = emp._id || emp.id;
+          if (String(empId) === String(userId)) {
+            return { ...emp, online: isOnline };
+          }
+          return emp;
+        }));
+      });
+      
+      return () => {
+        socket.off('onlineUsersList');
+        socket.off('userStatusChanged');
+      };
     }
   }, [user]);
 

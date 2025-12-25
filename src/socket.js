@@ -50,6 +50,19 @@ if (backendURL.includes('realtimecollaborationtool.vercel.app')) {
 // Log connection events for debugging
 socket.on('connect', () => {
   console.log('✅ Socket.IO connected to:', backendURL, 'Socket ID:', socket.id);
+  
+  // Get user from localStorage and notify server
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      if (user.id || user._id) {
+        socket.emit('userConnected', { userId: user.id || user._id });
+      }
+    } catch (error) {
+      console.error('Error parsing user from localStorage:', error);
+    }
+  }
 });
 
 socket.on('connect_error', (error) => {
