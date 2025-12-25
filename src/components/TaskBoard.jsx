@@ -4,8 +4,8 @@ import { AuthContext } from '../context/AuthContext';
 import './TaskBoard.css';
 import AddTaskModal from './AddTaskModal';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
-import { 
-  HiClipboardList, HiLightningBolt, HiCheckCircle, 
+import {
+  HiClipboardList, HiLightningBolt, HiCheckCircle,
   HiPlus, HiSearch, HiFilter, HiCollection, HiMenuAlt3,
   HiUser, HiCalendar, HiExclamationCircle, HiCheck,
   HiX, HiClock, HiTrendingUp
@@ -55,7 +55,7 @@ const TaskBoard = () => {
   const [proofFile, setProofFile] = useState(null);
   const [uploadingProof, setUploadingProof] = useState(false);
   const proofFileInputRef = useRef(null);
-  
+
   const intervalRef = useRef(null);
 
   const fetchTasks = useCallback(async () => {
@@ -64,10 +64,10 @@ const TaskBoard = () => {
     try {
       // If user is admin, fetch all tasks; otherwise fetch only their assigned tasks
       const userId = user?._id || user?.id;
-      const url = user?.role === 'admin' 
-        ? '/tasks' 
+      const url = user?.role === 'admin'
+        ? '/tasks'
         : `/tasks?assignedTo=${userId}`;
-      
+
       const res = await api.get(url);
       setTasks(res.data || []);
       updateTaskStats(res.data || []);
@@ -83,7 +83,7 @@ const TaskBoard = () => {
     try {
       const res = await api.get('/auth/users?role=member');
       setUsers(res.data);
-    } catch {}
+    } catch { }
   }, []);
 
   const fetchAllTasks = useCallback(async () => {
@@ -95,7 +95,7 @@ const TaskBoard = () => {
       } else {
         setAllTasks([]);
       }
-    } catch {}
+    } catch { }
   }, [user]);
 
   const updateTaskStats = (taskList) => {
@@ -135,7 +135,7 @@ const TaskBoard = () => {
         'Task "Database Migration" completed',
         'User John assigned to "API Integration"'
       ];
-      
+
       const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
       setRealTimeUpdates(prev => [
         { id: Date.now(), message: randomUpdate, timestamp: new Date() },
@@ -159,25 +159,25 @@ const TaskBoard = () => {
   const handleDrop = async (newStatus) => {
     setDragOver('');
     if (!draggingTask || draggingTask.status === newStatus) return;
-    
+
     // Only admin can change task status
     if (!user || user.role !== 'admin') {
       setError('Only admin can change task status');
       setDraggingTask(null);
       return;
     }
-    
+
     try {
       await api.put(`/tasks/${draggingTask._id}`, { status: newStatus });
       fetchTasks();
       setDraggingTask(null);
-      
+
       // Add real-time update
       setRealTimeUpdates(prev => [
-        { 
-          id: Date.now(), 
-          message: `Task "${draggingTask.title}" moved to ${newStatus}`, 
-          timestamp: new Date() 
+        {
+          id: Date.now(),
+          message: `Task "${draggingTask.title}" moved to ${newStatus}`,
+          timestamp: new Date()
         },
         ...prev.slice(0, 2)
       ]);
@@ -201,13 +201,13 @@ const TaskBoard = () => {
       setShowTaskModal(false);
       setSelectedTask(null);
       fetchTasks();
-      
+
       // Add real-time update
       setRealTimeUpdates(prev => [
-        { 
-          id: Date.now(), 
-          message: `Task deleted successfully`, 
-          timestamp: new Date() 
+        {
+          id: Date.now(),
+          message: `Task deleted successfully`,
+          timestamp: new Date()
         },
         ...prev.slice(0, 2)
       ]);
@@ -218,18 +218,18 @@ const TaskBoard = () => {
 
   const getTasksByStatus = (status) => {
     let filteredTasks = tasks.filter((task) => task.status === status);
-    
+
     if (filterPriority !== 'all') {
       filteredTasks = filteredTasks.filter(task => task.priority === filterPriority);
     }
-    
+
     if (searchTerm) {
-      filteredTasks = filteredTasks.filter(task => 
+      filteredTasks = filteredTasks.filter(task =>
         task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         task.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
+
     return filteredTasks;
   };
 
@@ -246,7 +246,7 @@ const TaskBoard = () => {
     const now = new Date();
     const diffTime = date - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays < 0) return { text: 'Overdue', color: '#EF4444' };
     if (diffDays === 0) return { text: 'Due today', color: '#F59E0B' };
     if (diffDays === 1) return { text: 'Due tomorrow', color: '#F59E0B' };
@@ -268,13 +268,13 @@ const TaskBoard = () => {
       },
     }),
     exit: { opacity: 0, y: -20, scale: 0.9, transition: { duration: 0.2 } },
-    hover: { 
-      scale: 1.05, 
+    hover: {
+      scale: 1.05,
       y: -5,
       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
     },
-    drag: { 
-      scale: 1.1, 
+    drag: {
+      scale: 1.1,
       rotate: 5,
       boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
     }
@@ -294,7 +294,7 @@ const TaskBoard = () => {
 
   if (!user) {
     return (
-      <motion.div 
+      <motion.div
         className="task-board loading"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -307,7 +307,7 @@ const TaskBoard = () => {
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         className="task-board loading"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -319,7 +319,7 @@ const TaskBoard = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="task-board"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -344,7 +344,7 @@ const TaskBoard = () => {
       </AnimatePresence>
 
       {/* Interactive Header */}
-      <motion.div 
+      <motion.div
         className="task-board-header"
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -353,7 +353,7 @@ const TaskBoard = () => {
         <div className="header-content">
           <div className="title-section">
             <motion.div className="title-with-icon">
-              <motion.div 
+              <motion.div
                 className="title-icon-wrapper"
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 3, repeat: Infinity }}
@@ -364,7 +364,7 @@ const TaskBoard = () => {
                   <HiClipboardList className="title-icon" />
                 )}
               </motion.div>
-              <motion.h1 
+              <motion.h1
                 className="task-board-title"
                 animate={{ scale: [1, 1.02, 1] }}
                 transition={{ duration: 3, repeat: Infinity }}
@@ -374,7 +374,7 @@ const TaskBoard = () => {
             </motion.div>
             <p>{user?.role === 'admin' ? 'Manage and track your team\'s progress' : 'View and track your assigned tasks'}</p>
           </div>
-          
+
           <div className="header-actions">
             <motion.button
               className="view-mode-btn"
@@ -394,7 +394,7 @@ const TaskBoard = () => {
                 </>
               )}
             </motion.button>
-            
+
             <motion.button
               className="filter-btn"
               onClick={() => setShowFilters(!showFilters)}
@@ -404,10 +404,10 @@ const TaskBoard = () => {
               <HiFilter className="btn-icon" />
               <span>Filters</span>
             </motion.button>
-            
+
             {user && user.role === 'admin' && (
-              <motion.button 
-                className="add-task-btn" 
+              <motion.button
+                className="add-task-btn"
                 onClick={() => setShowAddModal(true)}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
@@ -424,7 +424,7 @@ const TaskBoard = () => {
       </motion.div>
 
       {/* Task Statistics */}
-      <motion.div 
+      <motion.div
         className="task-stats"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -438,22 +438,22 @@ const TaskBoard = () => {
         ].map((stat, index) => {
           const IconComponent = stat.icon;
           return (
-          <motion.div
-            key={stat.label}
-            className="stat-card"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4 + index * 0.1 }}
-            whileHover={{ scale: 1.05, y: -5 }}
-          >
-            <div className="stat-icon" style={{ background: stat.color }}>
-              <IconComponent className="stat-icon-svg" />
-            </div>
-            <div className="stat-content">
-              <span className="stat-value">{stat.value}</span>
-              <span className="stat-label">{stat.label}</span>
-            </div>
-          </motion.div>
+            <motion.div
+              key={stat.label}
+              className="stat-card"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 + index * 0.1 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <div className="stat-icon" style={{ background: stat.color }}>
+                <IconComponent className="stat-icon-svg" />
+              </div>
+              <div className="stat-content">
+                <span className="stat-value">{stat.value}</span>
+                <span className="stat-label">{stat.label}</span>
+              </div>
+            </motion.div>
           );
         })}
       </motion.div>
@@ -461,7 +461,7 @@ const TaskBoard = () => {
       {/* Filters Panel */}
       <AnimatePresence>
         {showFilters && (
-          <motion.div 
+          <motion.div
             className="filters-panel"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -479,10 +479,10 @@ const TaskBoard = () => {
                 />
               </div>
             </div>
-            
+
             <div className="filter-group">
-              <select 
-                value={filterStatus} 
+              <select
+                value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 className="filter-select"
               >
@@ -492,10 +492,10 @@ const TaskBoard = () => {
                 ))}
               </select>
             </div>
-            
+
             <div className="filter-group">
-              <select 
-                value={filterPriority} 
+              <select
+                value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
                 className="filter-select"
               >
@@ -517,10 +517,10 @@ const TaskBoard = () => {
             users={users}
             tasks={allTasks}
             onClose={() => setShowAddModal(false)}
-            onTaskAdded={() => { 
-              setShowAddModal(false); 
-              fetchTasks(); 
-              fetchAllTasks(); 
+            onTaskAdded={() => {
+              setShowAddModal(false);
+              fetchTasks();
+              fetchAllTasks();
             }}
           />
         )}
@@ -528,7 +528,7 @@ const TaskBoard = () => {
 
       {/* Task Board View */}
       {viewMode === 'board' && (
-        <motion.div 
+        <motion.div
           className="task-columns"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -538,10 +538,10 @@ const TaskBoard = () => {
             <motion.div
               key={col.key}
               className={`task-column${dragOver === col.key ? ' drag-over' : ''} ${user && user.role !== 'admin' ? 'no-drop' : ''}`}
-              onDragOver={(e) => { 
+              onDragOver={(e) => {
                 if (user && user.role === 'admin') {
-                  e.preventDefault(); 
-                  handleDragOver(col.key); 
+                  e.preventDefault();
+                  handleDragOver(col.key);
                 }
               }}
               onDrop={() => {
@@ -557,7 +557,7 @@ const TaskBoard = () => {
               style={{ borderTopColor: col.color }}
             >
               <div className="task-column-header">
-                <motion.div 
+                <motion.div
                   className="task-column-title"
                   animate={{ scale: [1, 1.05, 1] }}
                   transition={{ duration: 2, repeat: Infinity, delay: index * 0.5 }}
@@ -576,10 +576,10 @@ const TaskBoard = () => {
                   {getTasksByStatus(col.key).length}
                 </div>
               </div>
-              
+
               <div className="task-list">
                 {getTasksByStatus(col.key).length === 0 ? (
-                  <motion.div 
+                  <motion.div
                     className="empty-tasks"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -611,31 +611,31 @@ const TaskBoard = () => {
                       >
                         <div className="task-header">
                           <div className="task-title">{task.title}</div>
-                          <div 
+                          <div
                             className="priority-badge"
                             style={{ background: priorityColors[task.priority] || '#6B7280' }}
                           >
                             {task.priority}
                           </div>
                         </div>
-                        
+
                         {task.description && (
                           <div className="task-description">
-                            {task.description.length > 100 
-                              ? `${task.description.substring(0, 100)}...` 
+                            {task.description.length > 100
+                              ? `${task.description.substring(0, 100)}...`
                               : task.description
                             }
                           </div>
                         )}
-                        
+
                         <div className="task-footer">
                           <div className="task-assignee">
                             {task.assignedTo && task.assignedTo.length > 0 ? (
                               <>
                                 <div className="assignees-group">
                                   {task.assignedTo.slice(0, 3).map((assignee, idx) => (
-                                    <div 
-                                      key={assignee._id || idx} 
+                                    <div
+                                      key={assignee._id || idx}
                                       className="assignee-avatar"
                                       title={assignee.name}
                                       style={{ marginLeft: idx > 0 ? '-8px' : '0', zIndex: 3 - idx }}
@@ -650,8 +650,8 @@ const TaskBoard = () => {
                                   )}
                                 </div>
                                 <span>
-                                  {task.assignedTo.length === 1 
-                                    ? task.assignedTo[0].name 
+                                  {task.assignedTo.length === 1
+                                    ? task.assignedTo[0].name
                                     : `${task.assignedTo.length} members`}
                                 </span>
                               </>
@@ -662,15 +662,15 @@ const TaskBoard = () => {
                               </>
                             )}
                           </div>
-                          
+
                           {task.dueDate && (
                             <div className="due-date">
                               {formatDueDate(task.dueDate)?.text}
                             </div>
                           )}
                         </div>
-                        
-                        <motion.div 
+
+                        <motion.div
                           className="task-progress"
                           initial={{ width: 0 }}
                           animate={{ width: `${task.progress || 0}%` }}
@@ -690,7 +690,7 @@ const TaskBoard = () => {
 
       {/* List View */}
       {viewMode === 'list' && (
-        <motion.div 
+        <motion.div
           className="task-list-view"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -704,7 +704,7 @@ const TaskBoard = () => {
             <div className="list-column">Due Date</div>
             <div className="list-column">Progress</div>
           </div>
-          
+
           <div className="list-content">
             {getFilteredTasks().map((task, index) => (
               <motion.div
@@ -731,8 +731,8 @@ const TaskBoard = () => {
                       <>
                         <div className="assignees-group">
                           {task.assignedTo.slice(0, 2).map((assignee, idx) => (
-                            <div 
-                              key={assignee._id || idx} 
+                            <div
+                              key={assignee._id || idx}
                               className="assignee-avatar"
                               title={assignee.name}
                               style={{ marginLeft: idx > 0 ? '-8px' : '0', zIndex: 2 - idx }}
@@ -747,8 +747,8 @@ const TaskBoard = () => {
                           )}
                         </div>
                         <span>
-                          {task.assignedTo.length === 1 
-                            ? task.assignedTo[0].name 
+                          {task.assignedTo.length === 1
+                            ? task.assignedTo[0].name
                             : `${task.assignedTo.length} members`}
                         </span>
                       </>
@@ -766,7 +766,7 @@ const TaskBoard = () => {
                   </span>
                 </div>
                 <div className="list-column">
-                  <span 
+                  <span
                     className="priority-badge"
                     style={{ background: priorityColors[task.priority] || '#6B7280' }}
                   >
@@ -784,7 +784,7 @@ const TaskBoard = () => {
                 </div>
                 <div className="list-column">
                   <div className="progress-container">
-                    <div 
+                    <div
                       className="progress-bar"
                       style={{ width: `${task.progress || 0}%` }}
                     ></div>
@@ -800,14 +800,14 @@ const TaskBoard = () => {
       {/* Task Detail Modal */}
       <AnimatePresence>
         {showTaskModal && selectedTask && (
-          <motion.div 
+          <motion.div
             className="modal-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowTaskModal(false)}
           >
-            <motion.div 
+            <motion.div
               className="modal-content task-modal"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -818,7 +818,7 @@ const TaskBoard = () => {
                 <h3>{selectedTask.title}</h3>
                 <div className="modal-header-actions">
                   {user && user.role === 'admin' && (
-                    <button 
+                    <button
                       className="delete-task-btn"
                       onClick={() => handleDeleteTask(selectedTask._id)}
                       title="Delete Task"
@@ -829,7 +829,7 @@ const TaskBoard = () => {
                   <button onClick={() => setShowTaskModal(false)}>✕</button>
                 </div>
               </div>
-              
+
               <div className="modal-body">
                 <div className="task-details">
                   {/* Description Section - Prominent Display */}
@@ -846,64 +846,64 @@ const TaskBoard = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Task Metadata Section */}
                   <div className="task-metadata-section">
                     <h4 className="metadata-title">Task Information</h4>
-                    
-                  <div className="detail-row">
-                    <span className="detail-label">Assigned To:</span>
-                    <div className="detail-value">
-                      {selectedTask.assignedTo && selectedTask.assignedTo.length > 0 ? (
-                        <div className="assignees-list">
-                          {selectedTask.assignedTo.map((assignee, idx) => (
-                            <span key={assignee._id || idx} className="assignee-tag">
-                              {assignee.name}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        'Unassigned'
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="detail-row">
-                    <span className="detail-label">Status:</span>
-                    <span className={`status-badge ${selectedTask.status.toLowerCase().replace(' ', '-')}`}>
-                      {selectedTask.status}
-                    </span>
-                  </div>
-                  
-                  <div className="detail-row">
-                    <span className="detail-label">Priority:</span>
-                    <span 
-                      className="priority-badge"
-                      style={{ background: priorityColors[selectedTask.priority] || '#6B7280' }}
-                    >
-                      {selectedTask.priority}
-                    </span>
-                  </div>
-                  
-                  {selectedTask.dueDate && (
+
                     <div className="detail-row">
-                      <span className="detail-label">Due Date:</span>
-                      <span className="detail-value">
-                        {new Date(selectedTask.dueDate).toLocaleDateString()}
+                      <span className="detail-label">Assigned To:</span>
+                      <div className="detail-value">
+                        {selectedTask.assignedTo && selectedTask.assignedTo.length > 0 ? (
+                          <div className="assignees-list">
+                            {selectedTask.assignedTo.map((assignee, idx) => (
+                              <span key={assignee._id || idx} className="assignee-tag">
+                                {assignee.name}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          'Unassigned'
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="detail-row">
+                      <span className="detail-label">Status:</span>
+                      <span className={`status-badge ${selectedTask.status.toLowerCase().replace(' ', '-')}`}>
+                        {selectedTask.status}
                       </span>
                     </div>
-                  )}
-                  
-                  <div className="detail-row">
-                    <span className="detail-label">Progress:</span>
-                    <div className="progress-container">
-                      <div 
-                        className="progress-bar"
-                        style={{ width: `${selectedTask.progress || 0}%` }}
-                      ></div>
-                      <span>{selectedTask.progress || 0}%</span>
+
+                    <div className="detail-row">
+                      <span className="detail-label">Priority:</span>
+                      <span
+                        className="priority-badge"
+                        style={{ background: priorityColors[selectedTask.priority] || '#6B7280' }}
+                      >
+                        {selectedTask.priority}
+                      </span>
                     </div>
-                  </div>
+
+                    {selectedTask.dueDate && (
+                      <div className="detail-row">
+                        <span className="detail-label">Due Date:</span>
+                        <span className="detail-value">
+                          {new Date(selectedTask.dueDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="detail-row">
+                      <span className="detail-label">Progress:</span>
+                      <div className="progress-container">
+                        <div
+                          className="progress-bar"
+                          style={{ width: `${selectedTask.progress || 0}%` }}
+                        ></div>
+                        <span>{selectedTask.progress || 0}%</span>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Task Files Section - Files uploaded by admin (visible to assigned employees and admins) */}
@@ -916,44 +916,44 @@ const TaskBoard = () => {
                         return String(assigneeId) === String(userId);
                       }
                     );
-                    
+
                     // Show task files if user is assigned OR user is admin
                     // Also show if task has files (even if no one assigned yet, admin can see)
                     const canViewTaskFiles = isAssigned || user?.role === 'admin';
                     const hasFiles = selectedTask.files && Array.isArray(selectedTask.files) && selectedTask.files.length > 0;
                     return canViewTaskFiles && hasFiles;
                   })() && (
-                    <div className="detail-row task-files-section">
-                      <div className="task-files-header">
-                        <span className="detail-label">📋 Task Files (Work Description):</span>
-                        <span className="task-files-badge" title="Files uploaded by admin">
-                          Admin Uploaded
-                        </span>
-                      </div>
-                      <div className="task-files-container">
-                        <div className="task-files-list">
-                          {selectedTask.files.map((fileUrl, idx) => {
-                            // Extract filename from URL
-                            const fileName = fileUrl.split('/').pop() || `File ${idx + 1}`;
-                            return (
-                              <div key={idx} className="task-file-item">
-                                <span className="task-file-icon">📄</span>
-                                <a 
-                                  href={`${(import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://techm4-collab-backend-1.onrender.com')}/${fileUrl}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="task-file-link"
-                                >
-                                  {fileName}
-                                </a>
-                                <span className="task-file-label">Work Description</span>
-                              </div>
-                            );
-                          })}
+                      <div className="detail-row task-files-section">
+                        <div className="task-files-header">
+                          <span className="detail-label">📋 Task Files (Work Description):</span>
+                          <span className="task-files-badge" title="Files uploaded by admin">
+                            Admin Uploaded
+                          </span>
+                        </div>
+                        <div className="task-files-container">
+                          <div className="task-files-list">
+                            {selectedTask.files.map((fileUrl, idx) => {
+                              // Extract filename from URL
+                              const fileName = fileUrl.split('/').pop() || `File ${idx + 1}`;
+                              return (
+                                <div key={idx} className="task-file-item">
+                                  <span className="task-file-icon">📄</span>
+                                  <a
+                                    href={`${(import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://techm4-collab-backend-1.onrender.com')}/${fileUrl}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="task-file-link"
+                                  >
+                                    {fileName}
+                                  </a>
+                                  <span className="task-file-label">Work Description</span>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* Proof Files Section - Visible to assigned employees AND admins */}
                   {(() => {
@@ -966,138 +966,145 @@ const TaskBoard = () => {
                         return String(assigneeId) === String(userId);
                       }
                     );
-                    
+
                     // Show proof files if user is assigned OR user is admin
                     const canViewProof = isAssigned || user?.role === 'admin';
                     return canViewProof;
                   })() && (
-                    <div className="detail-row proof-section">
-                      <div className="proof-section-header">
-                        <span className="detail-label">Proof of Completion:</span>
-                        {user?.role === 'admin' && (
-                          <span className="admin-view-badge" title="Admin can view all proof files">
-                            👁️ Admin View
-                          </span>
-                        )}
-                      </div>
-                      <div className="proof-files-container">
-                        {selectedTask.proofFiles && selectedTask.proofFiles.length > 0 ? (
-                          <div className="proof-files-list">
-                            {selectedTask.proofFiles.map((proof, idx) => (
-                              <div key={idx} className="proof-file-item">
-                                <span className="proof-file-icon">📎</span>
-                                <a 
-                                  href={`${(import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://techm4-collab-backend-1.onrender.com')}/${proof.fileUrl}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="proof-file-link"
-                                >
-                                  {proof.fileName}
-                                </a>
-                                <span className="proof-file-date">
-                                  {new Date(proof.uploadedAt).toLocaleDateString()}
-                                  {proof.uploadedBy && proof.uploadedBy.name && (
-                                    <span style={{ marginLeft: '0.5rem', color: '#9ca3af', fontSize: '0.75rem' }}>
-                                      by {proof.uploadedBy.name}
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="no-proof-message">No proof files uploaded yet</p>
-                        )}
-                        
-                        {/* Upload section - Only show for assigned members, not admins */}
-                        {selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
-                          assignee => {
-                            const assigneeId = assignee._id || assignee.id || assignee;
-                            const userId = user?._id || user?.id;
-                            return String(assigneeId) === String(userId);
-                          }
-                        ) && (
-                        <div className="proof-upload-section">
-                          <input
-                            type="file"
-                            ref={proofFileInputRef}
-                            onChange={(e) => setProofFile(e.target.files[0])}
-                            style={{ display: 'none' }}
-                            accept="image/*,.pdf,.doc,.docx,.txt"
-                          />
-                          <button
-                            type="button"
-                            className="upload-proof-btn"
-                            onClick={() => proofFileInputRef.current?.click()}
-                            disabled={uploadingProof}
-                          >
-                            📤 {proofFile ? 'Change File' : 'Upload Proof'}
-                          </button>
-                          {proofFile && (
-                            <div className="proof-file-preview">
-                              <span>{proofFile.name}</span>
-                              <button
-                                type="button"
-                                className="remove-proof-btn"
-                                onClick={() => setProofFile(null)}
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          )}
-                          {proofFile && (
-                            <button
-                              type="button"
-                              className="submit-proof-btn"
-                              onClick={async () => {
-                                if (!proofFile) return;
-                                
-                                // Double-check assignment before upload (UI check, backend is source of truth)
-                                const isAssigned = selectedTask.assignedTo && selectedTask.assignedTo.some(
-                                  assignee => {
-                                    const assigneeId = assignee._id || assignee.id || assignee;
-                                    const userId = user?._id || user?.id;
-                                    return String(assigneeId) === String(userId);
-                                  }
-                                );
-                                
-                                if (!isAssigned) {
-                                  alert('You can only upload proof for tasks assigned to you.');
-                                  return;
-                                }
-                                
-                                setUploadingProof(true);
-                                try {
-                                  const formData = new FormData();
-                                  formData.append('file', proofFile);
-                                  
-                                  const res = await api.post(`/tasks/${selectedTask._id}/proof`, formData, {
-                                    headers: { 'Content-Type': 'multipart/form-data' }
-                                  });
-                                  
-                                  // Update selected task with new proof
-                                  setSelectedTask(res.data.task);
-                                  setProofFile(null);
-                                  // Refresh tasks list
-                                  fetchTasks();
-                                } catch (err) {
-                                  console.error('Proof upload error:', err);
-                                  const errorMessage = err.response?.data?.error || 'Failed to upload proof';
-                                  alert(errorMessage);
-                                } finally {
-                                  setUploadingProof(false);
-                                }
-                              }}
-                              disabled={uploadingProof}
-                            >
-                              {uploadingProof ? 'Uploading...' : 'Submit Proof'}
-                            </button>
+                      <div className="detail-row proof-section">
+                        <div className="proof-section-header">
+                          <span className="detail-label">Proof of Completion:</span>
+                          {user?.role === 'admin' && (
+                            <span className="admin-view-badge" title="Admin can view all proof files">
+                              👁️ Admin View
+                            </span>
                           )}
                         </div>
-                        )}
+                        <div className="proof-files-container">
+                          {selectedTask.proofFiles && selectedTask.proofFiles.length > 0 ? (
+                            <div className="proof-files-list">
+                              {selectedTask.proofFiles.map((proof, idx) => (
+                                <div key={idx} className="proof-file-item">
+                                  <span className="proof-file-icon">📎</span>
+                                  <a
+                                    href={`${(import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://techm4-collab-backend-1.onrender.com')}/${proof.fileUrl}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="proof-file-link"
+                                  >
+                                    {proof.fileName}
+                                  </a>
+                                  <span className="proof-file-date">
+                                    {new Date(proof.uploadedAt).toLocaleDateString()}
+                                    {proof.uploadedBy && proof.uploadedBy.name && (
+                                      <span style={{ marginLeft: '0.5rem', color: '#9ca3af', fontSize: '0.75rem' }}>
+                                        by {proof.uploadedBy.name}
+                                      </span>
+                                    )}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="no-proof-message">No proof files uploaded yet</p>
+                          )}
+
+                          {/* Upload section - Only show for assigned members, not admins */}
+                          {selectedTask.assignedTo && selectedTask.assignedTo.length > 0 && selectedTask.assignedTo.some(
+                            assignee => {
+                              const assigneeId = assignee._id || assignee.id || assignee;
+                              const userId = user?._id || user?.id;
+                              return String(assigneeId) === String(userId);
+                            }
+                          ) && (
+                              <div className="proof-upload-section">
+                                <input
+                                  type="file"
+                                  ref={proofFileInputRef}
+                                  onChange={(e) => setProofFile(e.target.files[0])}
+                                  style={{ display: 'none' }}
+                                  accept="image/*,.pdf,.doc,.docx,.txt"
+                                />
+                                <button
+                                  type="button"
+                                  className="upload-proof-btn"
+                                  onClick={() => proofFileInputRef.current?.click()}
+                                  disabled={uploadingProof}
+                                >
+                                  📤 {proofFile ? 'Change File' : 'Upload Proof'}
+                                </button>
+                                {proofFile && (
+                                  <div className="proof-file-preview">
+                                    <span>{proofFile.name}</span>
+                                    <button
+                                      type="button"
+                                      className="remove-proof-btn"
+                                      onClick={() => setProofFile(null)}
+                                    >
+                                      ✕
+                                    </button>
+                                  </div>
+                                )}
+                                {proofFile && (
+                                  <button
+                                    type="button"
+                                    className="submit-proof-btn"
+                                    onClick={async () => {
+                                      if (!proofFile) return;
+
+                                      // Double-check assignment before upload (UI check, backend is source of truth)
+                                      const isAssigned = selectedTask.assignedTo && selectedTask.assignedTo.some(
+                                        assignee => {
+                                          const assigneeId = assignee._id || assignee.id || assignee;
+                                          const userId = user?._id || user?.id;
+                                          return String(assigneeId) === String(userId);
+                                        }
+                                      );
+
+                                      if (!isAssigned) {
+                                        alert('You can only upload proof for tasks assigned to you.');
+                                        return;
+                                      }
+
+                                      setUploadingProof(true);
+                                      try {
+                                        const formData = new FormData();
+                                        formData.append('file', proofFile);
+
+                                        const res = await api.post(`/tasks/${selectedTask._id}/proof`, formData, {
+                                          headers: { 'Content-Type': 'multipart/form-data' }
+                                        });
+
+                                        // Update selected task with new proof
+                                        setSelectedTask(res.data.task);
+                                        setProofFile(null);
+                                        // Refresh tasks list to show updated status
+                                        fetchTasks();
+
+                                        // Show success message if status was automatically changed
+                                        if (res.data.task.status === 'In Progress' && selectedTask.status === 'To Do') {
+                                          alert('✅ Proof uploaded successfully! Task status automatically changed to "In Progress".');
+                                        } else {
+                                          alert('✅ Proof uploaded successfully!');
+                                        }
+                                      } catch (err) {
+                                        console.error('Proof upload error:', err);
+                                        const errorMessage = err.response?.data?.error || 'Failed to upload proof';
+                                        alert(errorMessage);
+                                      } finally {
+                                        setUploadingProof(false);
+                                      }
+                                    }}
+                                    disabled={uploadingProof}
+                                  >
+                                    {uploadingProof ? 'Uploading...' : 'Submit Proof'}
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
             </motion.div>
